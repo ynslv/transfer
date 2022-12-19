@@ -15,7 +15,7 @@
       "template.openshift.io/bindable": "false"
     }
   },
-  "message": "The following service(s) have been created in your project: ${***}, ${DATABASE_SERVICE_NAME}.\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/sclorg/rails-ex/blob/master/README.md.",
+  "message": "The following service(s) have been created in your project: ${NAME}, ${DATABASE_SERVICE_NAME}.\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/sclorg/rails-ex/blob/master/README.md.",
   "labels": {
       "template": "rails-postgresql-example",
       "app": "rails-postgresql-example"
@@ -25,7 +25,7 @@
       "kind": "Secret",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${***}"
+        "name": "${NAME}"
       },
       "stringData" : {
         "database-user" : "${DATABASE_USER}",
@@ -39,7 +39,7 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${***}",
+        "name": "${NAME}",
         "annotations": {
           "description": "Exposes and load balances the application pods",
           "service.alpha.openshift.io/dependencies": "[{\"name\": \"${DATABASE_SERVICE_NAME}\", \"kind\": \"Service\"}]"
@@ -54,7 +54,7 @@
           }
         ],
         "selector": {
-          "name": "${***}"
+          "name": "${NAME}"
         }
       }
     },
@@ -62,13 +62,13 @@
       "kind": "Route",
       "apiVersion": "route.openshift.io/v1",
       "metadata": {
-        "name": "${***}"
+        "name": "${NAME}"
       },
       "spec": {
         "host": "${APPLICATION_DOMAIN}",
         "to": {
           "kind": "Service",
-          "name": "${***}"
+          "name": "${NAME}"
         }
       }
     },
@@ -76,7 +76,7 @@
       "kind": "ImageStream",
       "apiVersion": "image.openshift.io/v1",
       "metadata": {
-        "name": "${***}",
+        "name": "${NAME}",
         "annotations": {
           "description": "Keeps track of changes in the application image"
         }
@@ -86,7 +86,7 @@
       "kind": "BuildConfig",
       "apiVersion": "build.openshift.io/v1",
       "metadata": {
-        "name": "${***}",
+        "name": "${NAME}",
         "annotations": {
           "description": "Defines how to build the application",
           "template.alpha.openshift.io/wait-for-ready": "true"
@@ -107,7 +107,7 @@
             "from": {
               "kind": "ImageStreamTag",
               "namespace": "${NAMESPACE}",
-              "name": "ruby:DEFINIR-VERSAO"
+              "name": "ruby:2.7-ubi8"
             },
             "env": [
               {
@@ -120,7 +120,7 @@
         "output": {
           "to": {
             "kind": "ImageStreamTag",
-            "name": "${***}:latest"
+            "name": "${NAME}:latest"
           }
         },
         "triggers": [
@@ -146,7 +146,7 @@
       "kind": "DeploymentConfig",
       "apiVersion": "apps.openshift.io/v1",
       "metadata": {
-        "name": "${***}",
+        "name": "${NAME}",
         "annotations": {
           "description": "Defines how to deploy the application server",
           "template.alpha.openshift.io/wait-for-ready": "true"
@@ -162,7 +162,7 @@
                 "command": [
                   "./migrate-database.sh"
                 ],
-                "containerName": "${***}"
+                "containerName": "${NAME}"
               }
             }
           }
@@ -173,11 +173,11 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "${***}"
+                "${NAME}"
               ],
               "from": {
                 "kind": "ImageStreamTag",
-                "name": "${***}:latest"
+                "name": "${NAME}:latest"
               }
             }
           },
@@ -187,19 +187,19 @@
         ],
         "replicas": 1,
         "selector": {
-          "name": "${***}"
+          "name": "${NAME}"
         },
         "template": {
           "metadata": {
-            "name": "${***}",
+            "name": "${NAME}",
             "labels": {
-              "name": "${***}"
+              "name": "${NAME}"
             }
           },
           "spec": {
             "containers": [
               {
-                "name": "${***}",
+                "name": "${NAME}",
                 "image": " ",
                 "ports": [
                   {
@@ -231,7 +231,7 @@
                     "name": "POSTGRESQL_USER",
                     "valueFrom": {
                       "secretKeyRef" : {
-                        "name" : "${***}",
+                        "name" : "${NAME}",
                         "key" : "database-user"
                       }
                     }
@@ -240,7 +240,7 @@
                     "name": "POSTGRESQL_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef" : {
-                        "name" : "${***}",
+                        "name" : "${NAME}",
                         "key" : "database-password"
                       }
                     }
@@ -253,7 +253,7 @@
                     "name": "SECRET_KEY_BASE",
                     "valueFrom": {
                       "secretKeyRef" : {
-                        "name" : "${***}",
+                        "name" : "${NAME}",
                         "key" : "keybase"
                       }
                     }
@@ -274,7 +274,7 @@
                     "name": "APPLICATION_USER",
                     "valueFrom": {
                       "secretKeyRef" : {
-                        "name" : "${***}",
+                        "name" : "${NAME}",
                         "key" : "application-user"
                       }
                     }
@@ -283,7 +283,7 @@
                     "name": "APPLICATION_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef" : {
-                        "name" : "${***}",
+                        "name" : "${NAME}",
                         "key" : "application-password"
                       }
                     }
@@ -351,7 +351,7 @@
               "from": {
                 "kind": "ImageStreamTag",
                 "namespace": "${NAMESPACE}",
-                "name": "postgresql:DEFINIR-VERSAO"
+                "name": "postgresql:12-el8"
               }
             }
           },
@@ -411,7 +411,7 @@
                     "name": "POSTGRESQL_USER",
                     "valueFrom": {
                       "secretKeyRef" : {
-                        "name" : "${***}",
+                        "name" : "${NAME}",
                         "key" : "database-user"
                       }
                     }
@@ -420,7 +420,7 @@
                     "name": "POSTGRESQL_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef" : {
-                        "name" : "${***}",
+                        "name" : "${NAME}",
                         "key" : "database-password"
                       }
                     }
@@ -455,13 +455,15 @@
       "name": "NAME",
       "displayName": "Name",
       "description": "The name assigned to all of the frontend objects defined in this template.",
-      "required": false
+      "required": true,
+	  "value": "rails-postgresql-exercicio"
     },
     {
       "name": "NAMESPACE",
       "displayName": "Namespace",
-      "required": false,
-      "description": "The OpenShift Namespace where the ImageStream resides."      
+      "required": true,
+      "description": "The OpenShift Namespace where the ImageStream resides.",
+	  "value": "openshift"
     },
     {
       "name": "MEMORY_LIMIT",
@@ -469,6 +471,10 @@
       "required": true,
       "description": "Maximum amount of memory the Rails container can use.",
       "value": "512Mi"
+    },
+	{
+      "name": "HELLO_ADIENCE",
+      "value": "MENSAGEM"
     },
     {
       "name": "MEMORY_POSTGRESQL_LIMIT",
@@ -482,7 +488,7 @@
       "displayName": "Git Repository URL",
       "required": true,
       "description": "The URL of the repository with your application source code.",
-      "value": "URL DO REPO GIT VAI AQUI"
+      "value": "https://github.com/sclorg/rails-ex.git"
     },
     {
       "name": "SOURCE_REPOSITORY_REF",
